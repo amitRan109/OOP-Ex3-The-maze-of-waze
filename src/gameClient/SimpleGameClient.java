@@ -1,6 +1,7 @@
 package gameClient;
 
 import java.util.Collection;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import oop_dataStructure.oop_graph;
  *
  */
 public class SimpleGameClient {
+	
 	public static void main(String[] a) {
 		test1();}
 	public static void test1() {
