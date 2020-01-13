@@ -1,6 +1,8 @@
 package gameClient;
 import org.json.*;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -17,7 +19,7 @@ import dataStructure.node_data;
 import gui.Graph_GUI;
 import utils.Point3D;
 
-public class MyGameGUI extends JFrame {
+public class MyGameGUI extends JFrame implements MouseListener{
 
 	/**
 	 * 
@@ -28,14 +30,15 @@ public class MyGameGUI extends JFrame {
 	List <Robot> List_Robots;
 	graph g;
 	
-	public MyGameGUI (int scenario_num)  throws JSONException{
-		game = Game_Server.getServer(scenario_num);
+	public MyGameGUI ()  throws JSONException {
+		g=new DGraph ();
+		Graph_GUI gg= new Graph_GUI (g);
+		game = Game_Server.getServer(gg.getScenario_num());
 		init_Graph();
 		init_Fruits();
 		init_Robots();
-		Graph_GUI gg= new Graph_GUI (g);
-		gg.addRobots(List_Robots);
 		gg.addFruits(List_Fruits);
+		gg.addRobots(List_Robots);
 		gg.setVisible(true);
 	}
 	
@@ -130,8 +133,19 @@ public class MyGameGUI extends JFrame {
 				
 	}
 	
-	public static void main (String[]args) throws JSONException {
-		MyGameGUI g= new MyGameGUI (1);
-	}
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
 	
 }

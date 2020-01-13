@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BasicStroke;
 
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -25,6 +26,7 @@ import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
 import gameClient.Fruit;
+import gameClient.Range;
 import gameClient.Robot;
 import utils.Point3D;
 
@@ -42,25 +44,49 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 	private boolean showGraph = false;
 	private List <Robot> robots;
 	private List <Fruit> fruits;
+	Range scaleR; //the limints of x and y
+	public int scenario_num;
+
 	
+	public void changeSNum (int sNumber) {
+		this.scenario_num=sNumber;
+	}
+
+	public int getScenario_num() {
+		return scenario_num;
+	}
+
+	public void setScenario_num(int scenario_num) {
+		this.scenario_num = scenario_num;
+	}
 
 	//***constructor***
 	public Graph_GUI() {
 		initGUI();
 	}
-	
+
 	public Graph_GUI(graph g) {
+		this.fruits=null;
+		this.robots=null;
 		this.gr = (DGraph) g;
 		this.ga = new Graph_Algo();
 		this.ga.init(g);
 		initGUI();
-		repaint();
+		//repaint();
 	}
-	
+
+//	public Graph_GUI(graph g, List <Fruit> fruits, List<Robot> robots) {
+//
+//		this.gr = (DGraph) g;
+//		this.fruits=fruits;
+//		this.robots=robots;
+//		initGUI();
+//		setRobotsLoc ();
+//		setFruitsLoc ();
+//		repaint();
+//	}
 
 	//***functions***
-	
-	
 	public void setGraph_Algo(Graph_Algo ga) {
 		this.ga = new Graph_Algo();
 		this.ga = ga;
@@ -68,115 +94,52 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 	}
 
 	private void initGUI() {
+
 		showGraph=true;
 		this.setSize(1000, 800);
+		System.out.println("with (x) "+this.getWidth()+" hi (y) "+this.getHeight());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMenu();
 		setPointsLoc();
-		
+
 	}
-	
-	public void addRobots (List <Robot> l) {
-		this.robots=l;
-		setRobotsLoc ();
-	}
-	
-	public void addFruits (List <Fruit> l) {
-		this.fruits=l;
-		setFruitsLoc ();
-	}
-	
+
 	private void setPointsLoc () {
-		double max_x= find_max_x ();
-		double min_x= find_min_x ();
-		double max_y= find_max_y();
-		double min_y= find_min_y();
+		scaleR= new Range (find_max_x(),find_min_x(),find_max_y(),find_min_y());
 		for (node_data node: gr.getV()) {
-			double x=scale (node.getLocation().x(),min_x,max_x,50,800);
-			double y=scale (node.getLocation().y(),min_y,max_y,60,650);
-			node.setLocation(new Point3D(x,y));
+			System.out.println("1 "+node.getLocation());
+			Range range = new Range (node.getLocation().x(), node.getLocation().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
+			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
+			node.setLocation(new Point3D(range.getX(),range.getY()));
+			System.out.println("2 "+node.getLocation());
+
 		}
 	}
 	private void setRobotsLoc () {
+
 		for (Robot r: robots) {
 			double x=gr.getNode(r.getSrc()).getLocation().x();
 			double y=gr.getNode(r.getSrc()).getLocation().y();
 			r.setPos(new Point3D(x,y));
 		}
 	}
-	
+
 	private void setFruitsLoc () {
-		double max_x= find_max_x ();
-		double min_x= find_min_x ();
-		double max_y= find_max_y();
-		double min_y= find_min_y();
 		for (Fruit f: fruits) {
-			System.out.println("bef "+f.getPos());
-			double x=scale (f.getPos().x(),min_x,max_x,50,800);
-			double y=scale (f.getPos().y(),min_y,max_y,60,650);
-			f.setPos(new Point3D(x,y));
-			System.out.println("af "+f.getPos());
+			//System.out.println("bef "+f.getPos());
+			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
+			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
+			f.setPos(new Point3D(range.getX(),range.getY()));
+			//System.out.println("af "+f.getPos());
 
 		}
 	}
-	
-	/**
-	 * 
-	 * @param data denote some data to be scaled
-	 * @param r_min the minimum of the range of your data
-	 * @param r_max the maximum of the range of your data
-	 * @param t_min the minimum of the range of your desired target scaling
-	 * @param t_max the maximum of the range of your desired target scaling
-	 * @return
-	 */
-	private double scale(double data, double r_min, double r_max, double t_min, double t_max)
-	{
-		
-		double res = ((data - r_min) / (r_max-r_min)) * (t_max - t_min) + t_min;
-		return res;
-	}
-	
-	private double find_max_x () {
-		double ans=Double.MIN_VALUE;
-		for (node_data node: gr.getV()) {
-			if (node.getLocation().x()>ans) {
-				ans=node.getLocation().x();
-			}
-		}
-		return ans;
-	}
-	
-	private double find_max_y () {
-		double ans=Double.MIN_VALUE;
-		for (node_data node: gr.getV()) {
-			if (node.getLocation().y()>ans) {
-				ans=node.getLocation().y();
-			}
-		}
-		return ans;
-	}
-	
-	private double find_min_x () {
-		double ans=Double.MAX_VALUE;
-		for (node_data node: gr.getV()) {
-			if (node.getLocation().x()<ans) {
-				ans=node.getLocation().x();
-			}
-		}
-		return ans;
-	}
-	
-	private double find_min_y () {
-		double ans=Double.MAX_VALUE;
-		for (node_data node: gr.getV()) {
-			if (node.getLocation().y()<ans) {
-				ans=node.getLocation().y();
-			}
-		}
-		return ans;
-	}
+
+
+
 
 	public void setMenu() {
+
 		JMenuBar menuBar = new JMenuBar();
 		JMenu file = new JMenu("file");
 		JMenu algo = new JMenu("Algorithems");
@@ -193,7 +156,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 		number.addActionListener(this);
 		JMenuItem visual = new JMenuItem("visual");
 		visual.addActionListener(this);
-		JMenuItem TSP = new JMenuItem("TSP");
+		JMenuItem TSP = new JMenuItem("choose Graph"); //change!!
 		TSP.addActionListener(this);
 		file.add(show);
 		file.add(save);
@@ -210,15 +173,18 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+
 		String str = e.getActionCommand();
+		
 		switch (str) {
+		
 		case "is connected":
 			final JFrame isConnected = new JFrame();
 			isConnected.setSize(300, 200);
 			JLabel label0 = new JLabel();
 			label0.setFont(new Font("Courier", Font.PLAIN, 20));
 			if (ga.isConnected())
-			label0.setText("The graph is connected");
+				label0.setText("The graph is connected");
 			else label0.setText("The graph is'nt connected");
 
 			isConnected.add(label0);
@@ -323,7 +289,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 
 			break;
 
-		case "TSP":
+		case "chooce Graph":
 			JFrame tsp=new JFrame(); 
 
 			//submit button
@@ -332,7 +298,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 
 			//enter name label
 			JLabel labelt = new JLabel();		
-			labelt.setText("Enter a list of nodes you want to pass threw them : (example: 1,2)");
+			labelt.setText("Enter graph number (1-23)");
 			labelt.setBounds(10, 10, 500, 100);
 
 			//empty label which will show event after button clicked
@@ -355,30 +321,21 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 			//action listener
 			buttont.addActionListener(new ActionListener() {
 
+
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					String text = textfieldt.getText();
-					String [] target= text.split(",");
-
-					List<Integer> targets= new LinkedList <Integer> ();
-					List<node_data> ans= new LinkedList <node_data> ();
-					int i=0;
-					while (i<target.length) {
-						targets.add(Integer.parseInt(target[i]));
-						i++;
+					int sNumber= Integer.parseInt(text);
+					if (sNumber<1 || sNumber>23) {
+						labelt1.setText("choose number between 1 to 23");	
 					}
-					ans=ga.TSP(targets);
-					if (ans != null) {
-						String ans_s="";
-						for (node_data n: ans) {
-							ans_s+=n.getKey()+"-->";
-						}
-						labelt1.setText("The TSP is: "+ans_s);	
+					else {
+						changeSNum (sNumber);
+						repaint ();
 					}
-					else labelt1.setText("There is no way between these nodes");	
+					
 				}          
 			});
-
 			break;
 
 		case "save Graph":
@@ -404,7 +361,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 			//submit button
 			JButton buttonu=new JButton("Ok");    
 			buttonu.setBounds(100,110,140, 40); 
-			
+
 			//enter name label
 			JLabel labelu = new JLabel();		
 			labelu.setText("Enter the name of the file");
@@ -453,7 +410,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 
 	@Override
 	public void paint(Graphics g) {
-		
+
 		super.paint(g);
 		if(!showGraph)
 			return;
@@ -483,7 +440,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 				g.drawString((Double.toString(dest.getWeight())), (int)((loc.x()+loc1.x())/2),(int)((loc.y()+loc1.y())/2)); 
 
 				//mark src	
-				g.setColor(Color.RED);
+				g.setColor(Color.PINK);
 				g.fillOval((int)((loc.ix()*0.7)+(0.3*loc1.ix())), 1+(int)((loc.iy()*0.7)+(0.3*loc1.iy())), 8, 8); 
 
 				//print neighbor
@@ -507,7 +464,7 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 				g.setColor(Color.BLUE);
 				//n point
 				g.fillOval(loc.ix(), loc.iy(), 10, 10); 
-				
+
 				g.setColor(Color.black);
 				g.setFont(new Font("Courier", Font.PLAIN, 20));
 				// n key
@@ -520,14 +477,67 @@ public class Graph_GUI extends JFrame implements ActionListener, Serializable {
 		for (Robot r: robots) {
 			g.setColor(Color.green);
 			g.fillOval(r.getPos().ix(), r.getPos().iy(), 15, 15); 
-			//System.out.println("r "+r);
 		}
-		
+
 		for (Fruit f: fruits) {
-			//System.out.println("r "+f);
-			g.setColor(Color.YELLOW);
-			g.fillOval(f.getPos().ix(), f.getPos().iy(), 10, 20); 
-			//System.out.println("r "+r);
+			if (f.getType()==1) {
+				g.setColor(Color.YELLOW);
+			}
+			if (f.getType()==-1) {
+				g.setColor(Color.RED);
+			}
+			g.fillOval(f.getPos().ix(), f.getPos().iy(),10, 20); 
 		}
+	}
+	public double find_max_x () {
+
+		double ans=Double.MIN_VALUE;
+		for (node_data node: gr.getV()) {
+			if (node.getLocation().x()>ans) {
+				ans=node.getLocation().x();
+			}
+		}
+		return ans;
+	}
+
+	public double find_min_x () {
+		double ans=Double.MAX_VALUE;
+		for (node_data node: gr.getV() ) {
+			if (node.getLocation().x()<ans) {
+				ans=node.getLocation().x();
+			}
+		}
+		return ans;
+	}
+
+	public double find_max_y () {
+		double ans=Double.MIN_VALUE;
+		for (node_data node: gr.getV()) {
+			if (node.getLocation().y()>ans) {
+				ans=node.getLocation().y();
+			}
+		}
+		return ans;
+	}
+
+	public double find_min_y () {
+		double ans=Double.MAX_VALUE;
+		for (node_data node: gr.getV() ) {
+			if (node.getLocation().y()<ans) {
+				ans=node.getLocation().y();
+			}
+		}
+		return ans;
+	}
+
+	public void addFruits(List<Fruit> list_Fruits) {
+		this.fruits=list_Fruits;
+		setFruitsLoc ();
+		
+	}
+
+	public void addRobots(List<Robot> list_Robots) {
+		this.robots=list_Robots;
+		setRobotsLoc();
 	}
 }
