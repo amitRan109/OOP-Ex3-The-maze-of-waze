@@ -51,6 +51,7 @@ public class Range {
 		this.max_y = max_y;
 	}
 
+	
 	public Range (double x, double y,double max_x, double min_x, double max_y, double min_y) {
 		this.x=x;
 		this.y=y;
@@ -58,7 +59,7 @@ public class Range {
 		this.min_x=min_x;
 		this.max_y=max_y;
 		this.min_y=min_y;
-		System.out.println(max_x+" "+min_x+" "+max_y+" "+min_y);
+		//System.out.println(max_x+" "+min_x+" "+max_y+" "+min_y);
 	}
 	
 	//***functions***
