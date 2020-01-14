@@ -13,6 +13,7 @@ public class Fruit {
 		this.value=value;
 		this.type=type;
 		this.pos=pos;
+		this.edge=null;
 	}
 	
 	public void setEdge (DEdge e) {
