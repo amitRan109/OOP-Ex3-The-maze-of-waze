@@ -121,5 +121,9 @@ public class DNode implements node_data, Serializable{
 	public void setTag(int t) {
 		this.tag=t;
 	}
-	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return ""+this.key;
+	}
 }

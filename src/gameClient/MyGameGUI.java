@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -202,7 +203,6 @@ public class MyGameGUI extends JFrame implements MouseListener {
 				g.setColor(Color.BLUE);
 				//n point
 				g.fillOval(loc.ix(), loc.iy(), 10, 10); 
-
 				g.setColor(Color.black);
 				g.setFont(new Font("Courier", Font.PLAIN, 20));
 				// n key
@@ -254,7 +254,7 @@ public class MyGameGUI extends JFrame implements MouseListener {
 
 		//enter name label
 		JLabel labelt = new JLabel();		
-		labelt.setText("Enter graph number (1-23)");
+		labelt.setText("Enter graph number (0-23)");
 		labelt.setBounds(10, 10, 500, 100);
 
 		//empty label which will show event after button clicked
@@ -283,8 +283,8 @@ public class MyGameGUI extends JFrame implements MouseListener {
 			public void actionPerformed(ActionEvent arg0) {
 				String text = textfieldt.getText();
 				int sNumber= Integer.parseInt(text);
-				if (sNumber<1 || sNumber>23) {
-					labelt1.setText("choose number between 1 to 23");	
+				if (sNumber<0 || sNumber>23) {
+					labelt1.setText("choose number between 0 to 23");	
 				}
 				else {
 					window.dispose();
@@ -355,6 +355,7 @@ public class MyGameGUI extends JFrame implements MouseListener {
 						//System.out.println("3");
 						f.setEdge((DEdge)e);
 					}
+					
 				}
 
 			}

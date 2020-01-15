@@ -131,15 +131,19 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 	@Override
 	public double shortestPathDist(int src, int dest) {
 
-
 		if (g.getNode(src) == null || g.getNode(dest) == null) {
 			throw new RuntimeException ("Those nodes are'nt exist");
 		}
 		clear();
 		DNode src1 = (DNode) g.getNode(src);
 		src1.setWeight(0);
+		
+		
 		while (g.getNode(getMin())!=null) {
 			DNode min=(DNode) g.getNode(getMin());
+			
+			
+			
 			min.setTag(1);
 				for (edge_data edge: min.getE()) {
 					DNode neighbor= (DNode) g.getNode(edge.getDest()); 
@@ -150,6 +154,7 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 				}
 		}
 		if (g.getNode(dest).getWeight()==Double.MAX_VALUE) return -1;
+
 		return g.getNode(dest).getWeight();
 	}
 	
@@ -239,7 +244,7 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 	private int getMin () {
 		DNode min=new DNode (-1);
 		min.setWeight(Double.MAX_VALUE);
-		int minKey=0;
+		int minKey=-1;
 		for (node_data nodes : g.getV()) {
 			if (nodes.getWeight()<min.getWeight() && nodes.getTag()==0) {
 				min.setWeight(nodes.getWeight());;	

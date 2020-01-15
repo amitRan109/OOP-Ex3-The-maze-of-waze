@@ -52,7 +52,7 @@ public class ourGame extends JFrame implements ActionListener {
 	List <Robot> List_Robots;
 	graph gr;
 	Range scaleR; //the limits of x and y
-
+	Graph_Algo ga;
 	public ourGame () {
 		initWindow ();
 	}
@@ -72,9 +72,11 @@ public class ourGame extends JFrame implements ActionListener {
 		game = Game_Server.getServer(sNumber);
 		setMenuBar();
 		init_Graph();
-		init_Fruits();
 		setPointsLoc ();
+		init_Fruits();
 		init_Robots();
+		ga= new Graph_Algo ();
+		ga.init(gr);
 		//repaint();
 		this.setVisible(true);
 		//runGame();
@@ -92,6 +94,7 @@ public class ourGame extends JFrame implements ActionListener {
 	}
 
 	private void setPointsLoc () {
+
 		System.out.println("setPointsLoc");
 
 		scaleR= new Range (find_max_x(),find_min_x(),find_max_y(),find_min_y());
@@ -101,12 +104,12 @@ public class ourGame extends JFrame implements ActionListener {
 			node.setLocation(new Point3D(range.getX(),range.getY()));
 
 		}
-		
-		for (Fruit f: List_Fruits) {
-			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
-			f.setPos(new Point3D(range.getX(),range.getY()));
-		}
+
+		//		for (Fruit f: List_Fruits) {
+		//			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
+		//			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
+		//			f.setPos(new Point3D(range.getX(),range.getY()));
+		//		}
 	}
 
 	public double find_max_x () {
@@ -152,6 +155,7 @@ public class ourGame extends JFrame implements ActionListener {
 
 	@Override
 	public void paint(Graphics g) {
+
 		//	System.out.println("paint");
 		BufferedImage bufferedImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
@@ -190,7 +194,7 @@ public class ourGame extends JFrame implements ActionListener {
 				g.setColor(Color.black);
 				Graphics2D g3 = (Graphics2D) g;
 				g3.setStroke(new BasicStroke(2));
-				g.drawString((Double.toString(dest.getWeight())), (int)((loc.x()+loc1.x())/2),(int)((loc.y()+loc1.y())/2)); 
+				//g.drawString((Double.toString(dest.getWeight())), (int)((loc.x()+loc1.x())/2),(int)((loc.y()+loc1.y())/2)); 
 
 				//mark src	
 				g.setColor(Color.PINK);
@@ -250,8 +254,7 @@ public class ourGame extends JFrame implements ActionListener {
 			}
 			g.fillOval(f.getPos().ix(), f.getPos().iy(),10, 20); 
 		}
-		
-		
+
 	}
 
 	private void openWindow () {
@@ -333,9 +336,11 @@ public class ourGame extends JFrame implements ActionListener {
 			//System.out.println("s "+src+" w "+w+" dest "+dest);
 		}
 
+
 	}
 
 	private void init_Fruits ()  throws JSONException {
+
 		System.out.println("init_Fruits");
 		List <String> String_Fruits= game.getFruits();
 		List_Fruits= new LinkedList <Fruit>();
@@ -349,27 +354,37 @@ public class ourGame extends JFrame implements ActionListener {
 			List_Fruits.add(f);
 
 		}
+		System.out.println("scale");
+		//scale
 		for (Fruit f: List_Fruits) {
-			double EPS=0.001;
-			double edge_dis;
+			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
+			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
+			f.setPos(new Point3D(range.getX(),range.getY()));
+		}
+
+		for (Fruit f: List_Fruits) {
+			double EPS=0.01;
+			double edge_dis; //dis bet n,d
 			double f_dis_src;
 			double f_dis_dest;
 			for (node_data n: gr.getV()) {
-				//System.out.println("1");
 				for (edge_data e: gr.getE(n.getKey())) {
-					//System.out.println("2");
-					f_dis_src=((DNode)n).getLocation().distance2D(f.getPos());
-					f_dis_dest=((DNode)(gr.getNode(e.getDest()))).getLocation().distance2D(f.getPos());
-					edge_dis=((DNode)(gr.getNode(e.getSrc()))).getLocation().distance2D(((DNode)(gr.getNode(e.getSrc()))).getLocation());
-					double hefresh=(f_dis_src+f_dis_dest)-edge_dis;
-					if (hefresh<EPS && hefresh>(-1*EPS)) {
-						//System.out.println("3");
-						f.setEdge((DEdge)e);
+					if (f.getEdge()==null) {
+						f_dis_src=((DNode)n).getLocation().distance2D(f.getPos());
+						f_dis_dest=(gr.getNode(e.getDest())).getLocation().distance2D(f.getPos());
+						edge_dis=n.getLocation().distance2D((gr.getNode(e.getDest())).getLocation());
+						double hefresh=(f_dis_src+f_dis_dest)-edge_dis;
+						if (hefresh<EPS && hefresh>(-1*EPS)) {
+							//System.out.println("xxxxxxxxxxxx");
+							if ((f.getType()<0 && e.getSrc()>e.getDest()) || 
+									(f.getType()>0 && e.getSrc()<e.getDest()))	
+								f.setEdge((DEdge)e);
+						}
 					}
 				}
 
 			}
-			//System.out.println("edge "+f.getEdge());
+			//System.out.println("fruit: "+f.getType()+" edge "+f.getEdge());
 		}
 	}
 
@@ -378,7 +393,12 @@ public class ourGame extends JFrame implements ActionListener {
 		JSONObject ttt = robot_json.getJSONObject("GameServer");
 		int num_robot= ttt.getInt("robots");
 		for (int i=0; i<num_robot; i++) {
+			/*for (Fruit f:List_Fruits) {
+				//game.addRobot((int)(f.getEdge().getSrc()));
+
+			}*/
 			game.addRobot((int)(Math.random()*gr.nodeSize()));
+
 		}
 
 		List <String> String_Robots= game.getRobots();
@@ -398,7 +418,7 @@ public class ourGame extends JFrame implements ActionListener {
 			Robot r= new Robot (id,value,src,dest,speed,new_pos);
 			List_Robots.add(r);
 		}
-		//		runGame();
+
 	}
 
 	private void runGame () {
@@ -411,167 +431,205 @@ public class ourGame extends JFrame implements ActionListener {
 			@Override
 			public void run() {
 				while(game.isRunning()) {
-					moveRobots();
 
 					try {
-						Thread.sleep(50);
+						//System.out.println("bla");
+						moveRobots();
+						Thread.sleep(100);
 					} catch (Exception e) {
 						// TODO: handle exception
+						e.printStackTrace();
 					}
 				}
+				String results = game.toString();
+				System.out.println("Game Over: "+results);
 			}
 		};
 		Thread thread = new Thread(move);
 		thread.start();
 
-		String results = game.toString();
-		System.out.println("Game Over: "+results);
-	}
-	private void moveRobots() {
-		try {
-			List<String> log = game.move();
-			updateRobots(log);
-			updateFruit();
-			repaint();
-			if(log!=null) {
-				long t = game.timeToEnd();
-				for(int i=0;i<log.size();i++) {
-					String robot_json = log.get(i);
-
-					JSONObject line = new JSONObject(robot_json);
-					JSONObject ttt = line.getJSONObject("Robot");
-					int rid = ttt.getInt("id");
-					int src = ttt.getInt("src");
-					int dest = ttt.getInt("dest");
-
-					if(dest==-1) {	
-						dest = nextNode(gr, src);
-						game.chooseNextEdge(rid, dest);
-						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						System.out.println(ttt);
-					}
-				}
-			}
-			
-
-		}
-		catch (JSONException e) {e.printStackTrace();}
-		}
-		/**
-		 * a very simple random walk implementation!
-		 * @param g
-		 * @param src
-		 * @return
-		 */
-		private int nextNode(graph g, int src) {
-			int ans = -1;
-			Collection<edge_data> ee = g.getE(src);
-			Iterator<edge_data> itr = ee.iterator();
-			int s = ee.size();
-			int r = (int)(Math.random()*s);
-			int i=0;
-			while(i<r) {itr.next();i++;}
-			ans = itr.next().getDest();
-			return ans;
-		}
-
-
-		public void moveRodbot() {
-			try {
-				updateRobots(game.move());
-				updateFruit();
-				repaint();
-
-				//System.out.println(game.move());
-				for (Robot rob: List_Robots) {
-					if(rob.getDest()==-1) {
-						Iterator <edge_data> it=gr.getE(rob.getSrc()).iterator();
-						int dest= it.next().getDest();
-						System.out.println("dest "+dest);
-						game.chooseNextEdge(rob.getId(), dest);
-					}
-				}
-
-
-
-
-			} catch (JSONException e) {e.printStackTrace();}
-		}
-
-		private void updateRobots (List<String> list) throws JSONException {
-			System.out.println("update robot");
-			for (String robot: list) {
-				//System.out.println("robot "+robot);
-				JSONObject robot_json = new JSONObject(robot);
-				JSONObject details = robot_json.getJSONObject("Robot");
-				int id = details.getInt("id");
-				int dest = details.getInt("dest");
-				Point3D pos= new Point3D (details.getString("pos"));
-				Range range = new Range (pos.x(),pos.y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-				range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
-				List_Robots.get(id).setDest(dest);
-				List_Robots.get(id).setPos(new Point3D (range.x,range.y));
-				//System.out.println("get id "+List_Robots.get(id));
-			}
-		}
-
-		private void updateFruit () throws JSONException {
-			System.out.println("updateFruit");
-			for (Fruit fruit: List_Fruits) {
-				if (!isContainsF_list(fruit.getPos(),fruit.getType())) {
-					List_Fruits.remove(fruit);
-				}
-			}
-
-			for (String s: game.getFruits()) {
-				JSONObject fruit_json = new JSONObject(s);
-				JSONObject details = fruit_json.getJSONObject("Fruit");
-				double value = details.getDouble("value");
-				int type = details.getInt("type");
-				Point3D pos= new Point3D (details.getString("pos"));
-
-				if (!isContainsF_game(pos, type)) {
-					List_Fruits.add(new Fruit (value,type,pos));
-				}
-			}
-			
-			for (Fruit f: List_Fruits) {
-				Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-				range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
-				f.setPos(new Point3D(range.getX(),range.getY()));
-			}
-		}
-
-		private boolean isContainsF_list (Point3D pos, int type) {
-			for (Fruit f: List_Fruits) {
-				if (f.getPos()==pos && f.getType()==type) return true;
-			}
-			return false;
-		}
-
-		private boolean isContainsF_game (Point3D pos, int type) throws JSONException {
-			for (String s: game.getFruits()) {
-				JSONObject robot_json = new JSONObject(s);
-				JSONObject details = robot_json.getJSONObject("Fruit");
-				int type1 = details.getInt("type");
-				Point3D pos1= new Point3D (details.getString("pos"));
-				if (pos1==pos && type1==type) return true;
-			}
-			return false;
-		}
-
-		public static void main (String[]args) {
-			ourGame h= new ourGame ();
-			h.setVisible(false);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			System.out.println("action");
-			if (e.getActionCommand()=="play game") {
-				runGame();
-			}
-
-		}
 
 	}
+	private void moveRobots() throws JSONException {
+		//System.out.println("move ");
+		//System.out.println(game.timeToEnd()/1000);
+
+		updateRobots(game.move());
+		updateFruit();
+		repaint();
+		List <node_data> way=null;
+		double sp=Double.MAX_VALUE;
+		Fruit closest=null;
+		int next_edge=0;
+		//System.out.println("for(Robot rob:List_Robots)");
+		for(Robot rob:List_Robots) {
+			for (Fruit fr:List_Fruits) {
+				double check=0;
+				check=ga.shortestPathDist(rob.getSrc(), fr.getEdge().getSrc());
+				if(check<sp) {
+					sp=check;
+					closest=fr;
+					System.out.println("1)"+rob.getSrc()+"2)"+closest.getEdge().getSrc());
+					way=ga.shortestPath(rob.getSrc(), closest.getEdge().getSrc());
+				}
+			}
+			System.out.println("way "+way);
+			if(way.size()>1) {
+				next_edge=way.get(1).getKey();
+				game.chooseNextEdge(rob.getId(),next_edge);
+			}
+			if(way.size()==1) {
+				game.chooseNextEdge(rob.getId(),closest.getEdge().getDest());
+			}
+
+		}
+
+	}	
+
+		
+//		try {
+//			List<String> log = game.move();
+//			updateRobots(log);
+//			updateFruit();
+//			repaint();
+//			if(log!=null) {
+//				long t = game.timeToEnd();
+//				for(int i=0;i<log.size();i++) {
+//					String robot_json = log.get(i);
+//
+//					JSONObject line = new JSONObject(robot_json);
+//					JSONObject ttt = line.getJSONObject("Robot");
+//					int rid = ttt.getInt("id");
+//					int src = ttt.getInt("src");
+//					int dest = ttt.getInt("dest");
+//
+//					if(dest==-1) {	
+//						dest = nextNode(gr, src);
+//						game.chooseNextEdge(rid, dest);
+//						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
+//						System.out.println(ttt);
+//					}
+//				}
+//			}
+//
+//
+//		}
+//		catch (JSONException e) {e.printStackTrace();}
+//		}
+//	 
+//	
+//			private int nextNode(graph g, int src) {
+//				int ans = -1;
+//				Collection<edge_data> ee = g.getE(src);
+//				Iterator<edge_data> itr = ee.iterator();
+//				int s = ee.size();
+//				int r = (int)(Math.random()*s);
+//				int i=0;
+//				while(i<r) {itr.next();i++;}
+//				ans = itr.next().getDest();
+//				return ans;
+//			}
+
+
+	//		private void moveRodbot() {
+	//			try {
+	//				updateRobots(game.move());
+	//				updateFruit();
+	//				repaint();
+	//
+	//				//System.out.println(game.move());
+	//				for (Robot rob: List_Robots) {
+	//					if(rob.getDest()==-1) {
+	//						Iterator <edge_data> it=gr.getE(rob.getSrc()).iterator();
+	//						int dest= it.next().getDest();
+	//						System.out.println("dest "+dest);
+	//						game.chooseNextEdge(rob.getId(), dest);
+	//					}
+	//				}
+	//			} catch (JSONException e) {e.printStackTrace();}
+	//		}
+
+	private void updateRobots (List<String> list) throws JSONException {
+		System.out.println(list);
+		System.out.println("update robot");
+		for (String robot: list) {
+			//System.out.println("robot "+robot);
+			JSONObject robot_json = new JSONObject(robot);
+			JSONObject details = robot_json.getJSONObject("Robot");
+			int id = details.getInt("id");
+			int src = details.getInt("src");
+			int dest = details.getInt("dest");
+			Point3D pos= new Point3D (details.getString("pos"));
+			Range range = new Range (pos.x(),pos.y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
+			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
+			List_Robots.get(id).setSrc(src);
+			List_Robots.get(id).setDest(dest);
+			List_Robots.get(id).setPos(new Point3D (range.x,range.y));
+			//System.out.println("get id "+List_Robots.get(id));
+		}
+	}
+
+	private void updateFruit () throws JSONException {
+		System.out.println("updateFruit");
+		List_Fruits.clear();
+		init_Fruits();
+
+		//		for (Fruit fruit: List_Fruits) {
+		//			if (!isContainsF_list(fruit.getPos(),fruit.getType())) {
+		//				List_Fruits.remove(fruit);
+		//			}
+		//		}
+		//
+		//		for (String s: game.getFruits()) {
+		//			JSONObject fruit_json = new JSONObject(s);
+		//			JSONObject details = fruit_json.getJSONObject("Fruit");
+		//			double value = details.getDouble("value");
+		//			int type = details.getInt("type");
+		//			Point3D pos= new Point3D (details.getString("pos"));
+		//
+		//			if (!isContainsF_game(pos, type)) {
+		//				List_Fruits.add(new Fruit (value,type,pos));
+		//			}
+		//		}
+		//
+		//		for (Fruit f: List_Fruits) {
+		//			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
+		//			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
+		//			f.setPos(new Point3D(range.getX(),range.getY()));
+		//		}
+	}
+
+	private boolean isContainsF_list (Point3D pos, int type) {
+		for (Fruit f: List_Fruits) {
+			if (f.getPos()==pos && f.getType()==type) return true;
+		}
+		return false;
+	}
+
+	private boolean isContainsF_game (Point3D pos, int type) throws JSONException {
+		for (String s: game.getFruits()) {
+			JSONObject robot_json = new JSONObject(s);
+			JSONObject details = robot_json.getJSONObject("Fruit");
+			int type1 = details.getInt("type");
+			Point3D pos1= new Point3D (details.getString("pos"));
+			if (pos1==pos && type1==type) return true;
+		}
+		return false;
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		System.out.println("action");
+		if (e.getActionCommand()=="play game") {
+			runGame();
+		}
+
+	}
+
+	public static void main (String [] args) {
+		ourGame g = new ourGame ();
+		g.setVisible(false);
+	}
+
+}

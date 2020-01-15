@@ -7,7 +7,7 @@ public class Fruit {
 	private double value;
 	private int type;
 	private Point3D pos;
-	private DEdge edge;
+	private DEdge edge=new DEdge();;
 	
 	public Fruit (double value, int type, Point3D pos)  {
 		this.value=value;
