@@ -231,6 +231,7 @@ public class MyGameGUI extends JFrame implements MouseListener {
 	private void paint_fruits(Graphics g) {
 		//System.out.println("paint_fruits");
 		for (Fruit f: List_Fruits) {
+			
 			if (f.getType()==1) {
 				g.setColor(Color.YELLOW);
 			}
@@ -238,6 +239,7 @@ public class MyGameGUI extends JFrame implements MouseListener {
 				g.setColor(Color.RED);
 			}
 			g.fillOval(f.getPos().ix(), f.getPos().iy(),10, 20); 
+			
 		}
 	}
 
@@ -393,7 +395,6 @@ public class MyGameGUI extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		System.out.println("xxxxxxxxxx");
 	}
 
 	@Override
@@ -420,15 +421,19 @@ public class MyGameGUI extends JFrame implements MouseListener {
 			
 			try {
 				init_Robots();
+				repaint();
 			} catch (JSONException e) {e.printStackTrace();}
 		}
 		else {
 			
 			int x = arg0.getX();
+			System.out.println("1))))"+x);
 			System.out.println(x);
 		
 			int y = arg0.getY();
 			System.out.println(y);
+			System.out.println("2))))"+y);
+
 		Point3D point= new Point3D (x,y);
 			
 			//find the closest node to the click
@@ -436,43 +441,54 @@ public class MyGameGUI extends JFrame implements MouseListener {
 			node_data ans = null;
 			for (node_data node: gr.getV()) {
 				double dis=point.distance2D(node.getLocation());
+				System.out.println("3))))"+dis);
 				if (dis<min_dis) {
 					min_dis=dis;
+					System.out.println("4))))"+min_dis);
 					ans=node;
 					//System.out.println("node "+ans.getLocation());
 				}
 			}
 			
 			//find the closest robot to the node
-			min_dis=Double.MAX_VALUE;
+			double min=Double.MAX_VALUE;
 			Robot rob=null;
 			for (Robot r: List_Robots) {
 				double dis=r.getPos().distance2D(ans.getLocation());
-				if (dis<min_dis) {
-					min_dis=dis;
+				System.out.println("5))))"+dis);
+
+				if (dis<min) {
+					min=dis;
+					System.out.println("6))))"+min);
+
 					rob=r;
+					System.out.println("13))))"+rob.getId());
+
 				}
 			}
-			
+
 			rob.setDest(ans.getKey());
-			
+			System.out.println("7))))"+rob.getDest());
+			System.out.println("8))))"+ans.getKey());
+
+
 			//change the rob location
 			for (Robot r: List_Robots) {
 				if (rob.getId()==r.getId()) {
 					r.setDest(rob.getDest());
+					System.out.println("9))))"+r.getDest());
+
 					r.setPos(ans.getLocation());
-					//System.out.println("rr "+r);
-					//System.out.println("ans "+ans.getLocation());
+					System.out.println("10))))"+ans.getLocation().toString());
+
+					System.out.println("10))))"+r.getPos().toString());
+					System.out.println("11))))"+r.getId());
+					System.out.println("12))))"+ans.getKey());
+
+					
 				}
 			}
-			
-			//change the rob pos
-			//System.out.println("rob!! "+game.move());
 			game.chooseNextEdge(rob.getId(), ans.getKey());
-			//System.out.println("rob!! "+game.move());
-			
-			
-
 		}
 		repaint();
 		
@@ -488,7 +504,6 @@ public class MyGameGUI extends JFrame implements MouseListener {
 			JSONObject ttt = robot_json.getJSONObject("GameServer");
 			int num_robot= ttt.getInt("robots");
 			if (List_Robots.size() == num_robot && isRun==false) {
-				//System.out.println("r");
 				runGame();
 			}
 			
