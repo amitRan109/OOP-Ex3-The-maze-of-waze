@@ -25,7 +25,7 @@ public class Fruit {
 	}
 	
 	public String toString () {
-		return "value "+value+" type "+type+" pos "+pos;
+		return "value "+value+" type "+type+" pos "+pos+" edge "+edge;
 	}
 	
 	public double getValue() {
