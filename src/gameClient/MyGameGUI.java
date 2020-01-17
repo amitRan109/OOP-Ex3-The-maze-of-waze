@@ -87,6 +87,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 		setPointsLoc ();
 		init_Fruits();
 		repaint();
+		System.out.println("repaint initGui");
 		
 		
 		this.setVisible(true);
@@ -102,11 +103,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 
 		}
 
-//		for (Fruit f: List_Fruits) {
-//			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-//			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
-//			f.setPos(new Point3D(range.getX(),range.getY()));
-//		}
+
 	}
 
 	public double find_max_x () {
@@ -245,7 +242,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	private void paint_fruits(Graphics g) {
 		//System.out.println("paint_fruits");
 		for (Fruit f: List_Fruits) {
-
+			System.out.println("f "+f);
 			if (f.getType()==1) {
 				g.setColor(Color.YELLOW);
 			}
@@ -338,57 +335,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 
 	}
 
-//	private void init_Fruits ()  throws JSONException {
-//		//System.out.println("init_Fruits");
-//		List <String> String_Fruits= game.getFruits();
-//		List_Fruits= new LinkedList <Fruit>();
-//		
-//		//read fruits from server
-//		for (String fruit: String_Fruits) {
-//			JSONObject fruit_json = new JSONObject(fruit);
-//			JSONObject details = fruit_json.getJSONObject("Fruit");
-//			double value = details.getDouble("value");
-//			int type = details.getInt("type");
-//			Point3D pos= new Point3D (details.getString("pos"));
-//			Fruit f= new Fruit (value,type,pos);
-//			List_Fruits.add(f);
-//
-//		}
-//		
-//		//change the scale
-//		for (Fruit f: List_Fruits) {
-//			Range range = new Range (f.getPos().x(), f.getPos().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-//			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
-//			f.setPos(new Point3D(range.getX(),range.getY()));
-//		}
-//
-//		//update the edge of fruit
-//		for (Fruit f: List_Fruits) {
-//			double EPS=0.01;
-//			double edge_dis; //dis bet n,d
-//			double f_dis_src;
-//			double f_dis_dest;
-//			for (node_data n: gr.getV()) {
-//				for (edge_data e: gr.getE(n.getKey())) {
-//					if (f.getEdge()==null) {
-//						f_dis_src=((DNode)n).getLocation().distance2D(f.getPos());
-//						f_dis_dest=(gr.getNode(e.getDest())).getLocation().distance2D(f.getPos());
-//						edge_dis=n.getLocation().distance2D((gr.getNode(e.getDest())).getLocation());
-//						double hefresh=(f_dis_src+f_dis_dest)-edge_dis;
-//						if (hefresh<EPS && hefresh>(-1*EPS)) {
-//							if ((f.getType()<0 && e.getSrc()>e.getDest()) || 
-//									(f.getType()>0 && e.getSrc()<e.getDest()))	
-//								f.setEdge((DEdge)e);
-//						}
-//					}
-//				}
-//
-//			}
-//			System.out.println("edge "+f.getEdge());
-//		}
-//
-//
-//	}
+
 	
 	private void init_Fruits ()  throws JSONException {
 
@@ -499,7 +446,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 
 				try {
 					init_Robots();
-					repaint();
+
 				} catch (JSONException e) {e.printStackTrace();}
 			}
 			else {
@@ -534,8 +481,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 				}
 			}
 			repaint();
-		
-
+			System.out.println("repaint pressed");
 
 	}
 
@@ -555,20 +501,9 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 			} catch (JSONException e) {e.printStackTrace();}
 		
 	}
-//	private void init_Robots_auto () throws JSONException {
-//		JSONObject robot_json = new JSONObject(game.toString());
-//		JSONObject ttt = robot_json.getJSONObject("GameServer");
-//		int num_robot= ttt.getInt("robots");
-//		for (int i=0; i<num_robot; i++) {
-//			/*for (Fruit f:List_Fruits) {
-//				//game.addRobot((int)(f.getEdge().getSrc()));
-//
-//			}*/
-//			game.addRobot((int)(Math.random()*gr.nodeSize()));
-//
-//		}
-//	}
+
 	private void runGameAuto () throws JSONException {
+
 		ourGame Agame= new ourGame (game, gr, List_Fruits);
 		Agame.init_Robots_auto();
 		init_Robots();
@@ -584,6 +519,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 					try {
 						Agame.runGameAuto();
 						moveRobotAuto();
+						
 						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -605,9 +541,13 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	
 	
 	private void moveRobotAuto () throws JSONException {
+
+		System.out.println("time "+game.timeToEnd()/1000);
 		updateRobots(game.move());
 		updateFruit();
 		repaint();
+		System.out.println("repaint moveRobotAuto ");
+
 	}
 
 	private void runGameManual ()  {
@@ -644,10 +584,11 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 				updateRobots(game_move);
 			updateFruit();
 			repaint();
+			System.out.println(" repaint moveRobot");
 		} catch (JSONException e) {e.printStackTrace();}
 	}
 
-	private void updateRobots (List <String> game_move) throws JSONException {
+	private void updateRobots (List <String> game_move) throws JSONException { 
 		for (String robot : game_move) {
 			JSONObject robot_json = new JSONObject(robot);
 			JSONObject details = robot_json.getJSONObject("Robot");
@@ -686,23 +627,6 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 		//		}
 	}
 
-//	private boolean isContainsF_list (Point3D pos, int type) {
-//		for (Fruit f: List_Fruits) {
-//			if (f.getPos()==pos && f.getType()==type) return true;
-//		}
-//		return false;
-//	}
-//
-//	private boolean isContainsF_game (Point3D pos, int type) throws JSONException {
-//		for (String s: game.getFruits()) {
-//			JSONObject robot_json = new JSONObject(s);
-//			JSONObject details = robot_json.getJSONObject("Fruit");
-//			int type1 = details.getInt("type");
-//			Point3D pos1= new Point3D (details.getString("pos"));
-//			if (pos1==pos && type1==type) return true;
-//		}
-//		return false;
-//	}
 
 	private boolean isContainsR (int id) {
 		for (Robot r: List_Robots) {
