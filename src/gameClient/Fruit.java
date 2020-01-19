@@ -1,13 +1,22 @@
 package gameClient;
 import dataStructure.DEdge;
 import utils.Point3D;
+/**
+ * 
+ *The class represent a fruit object that have four fildes:
 
+private double value;//the fruit value
+private int type;//if the type value is -1=the fruit is banana if the type value is 1=the fruit is apple
+private Point3D pos;//the fruit location
+private DEdge edge;//the edge that the fruit on
+ *
+ */
 
 public class Fruit {
 	private double value;
 	private int type;
 	private Point3D pos;
-	private DEdge edge=new DEdge();;
+	private DEdge edge;
 	
 	public Fruit (double value, int type, Point3D pos)  {
 		this.value=value;
@@ -16,6 +25,12 @@ public class Fruit {
 		this.edge=null;
 	}
 	
+	//***functions***
+	public String toString () {
+		return "value "+value+" type "+type+" pos "+pos+" edge "+edge;
+	}
+	
+	//***getters & setters***
 	public void setEdge (DEdge e) {
 		this.edge=e;
 	}
@@ -24,9 +39,6 @@ public class Fruit {
 		return this.edge;
 	}
 	
-	public String toString () {
-		return "value "+value+" type "+type+" pos "+pos+" edge "+edge;
-	}
 	
 	public double getValue() {
 		return value;

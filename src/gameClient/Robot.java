@@ -1,6 +1,18 @@
 package gameClient;
 
 import utils.Point3D;
+/**
+ * The class represent a robot object that have six fildes:
+
+private int id;//the robot id
+private double value;//the robot score
+private int src;//the node it's on now
+private int dest;//the node it's about to move to
+private double speed;//the robot speed
+private Point3D pos;//his location
+ * @author CHEN KATZOVER
+ *
+ */
 
 public class Robot {
 	private int id;

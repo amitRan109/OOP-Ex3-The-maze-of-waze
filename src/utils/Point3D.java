@@ -86,6 +86,11 @@ public class Point3D implements Serializable
     {
         return _x+","+_y+","+_z;
     }
+    
+    public String orgToString()
+    {
+        return _x+","+_y+","+_z;
+    }
 
     public double distance3D(Point3D p2)
     {

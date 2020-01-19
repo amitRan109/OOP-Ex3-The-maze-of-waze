@@ -134,13 +134,9 @@ public class Graph_Algo implements graph_algorithms, Serializable {
 		clear();
 		DNode src1 = (DNode) g.getNode(src);
 		src1.setWeight(0);
-		//src1.setTag(1);
 
 		DNode min;
 		while ((min = (DNode) g.getNode(getMin())) != null) {
-			// =(DNode) g.getNode(getMin());
-
-			// if(min == null)
 
 			min.setTag(1);
 			for (edge_data edge : min.getE()) {
