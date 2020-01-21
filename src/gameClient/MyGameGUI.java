@@ -41,7 +41,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	game_service game; // you have [0,23] games.
+	game_service game; // you have [0,10] games.
 	List <Fruit> List_Fruits;
 	List <Robot> List_Robots;
 	graph gr;
@@ -114,14 +114,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	 *scaled the locations to the jframe window size.
 	 */
 	
-//	private void setPointsLoc () {	
-//		for (node_data node: gr.getV()) {
-//			Range range = new Range (node.getLocation().x(), node.getLocation().y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-//			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
-//			node.setLocation(new Point3D(range.getX(),range.getY()));
-//
-//		}
-//	}
+
 
 	public double find_max_x () {
 
@@ -174,7 +167,6 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 		double max_y=find_max_y();
 		double min_y=find_min_y();
 		
-		//(this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8)
 		double resx = ((x - min_x) / (max_x-min_x)) * (frame_max_x - farme_min_x) + farme_min_x;
 		double resy = ((y - min_y) / (max_y-min_y)) * (frame_max_y - farme_min_y) + farme_min_y;
 		return new Point3D(resx, resy);
@@ -384,7 +376,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 				String text = textfieldt.getText();
 				int sNumber= Integer.parseInt(text);
 				if (sNumber<0 || sNumber>23) {
-					labelt1.setText("choose number between 0 to 23");	
+					labelt1.setText("choose number between 0 to 10");	
 				}
 				else {
 					try {
@@ -402,7 +394,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 
 	}
 	/**
-	 *  update the graph fron the game server.
+	 *  update the graph from the game server.
 	 */
 	private void init_Graph() throws JSONException{
 
@@ -616,7 +608,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 					} catch (JSONException e) {e.printStackTrace();}
 
 					try {
-						Thread.sleep(100);
+						Thread.sleep(TimeToSleep());
 					} catch (Exception e) {e.getStackTrace();}
 				}
 				repaint();
@@ -629,6 +621,22 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 
 
 	}
+	
+	private int TimeToSleep () {
+		int sleep=100;
+		for (Robot rob: List_Robots) {
+			for (Fruit f: List_Fruits) {
+				if (rob.getSrc() == f.getEdge().getSrc() && 
+						rob.getDest() == f.getEdge().getDest()) {
+					sleep= 90;
+					break;
+				}
+			}
+		}
+		return sleep;
+	}
+	
+	
 	/**
 	 * update the robots changes in the auto game.
 	 */
@@ -657,7 +665,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 					moveRobot();
 
 					try {
-						Thread.sleep(100);
+						Thread.sleep(85);
 					} catch (Exception e) {}
 
 				}
@@ -695,8 +703,6 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 			int src = details.getInt("src");
 			int dest = details.getInt("dest");
 			Point3D pos= new Point3D (details.getString("pos"));
-//			Range range = new Range (pos.x(),pos.y(),scaleR.getMax_x(),scaleR.getMin_x(),scaleR.getMax_y(),scaleR.getMin_y());
-//			range.scale((this.getWidth())*0.01,(this.getWidth())*0.9,(this.getHeight())*0.1,(this.getHeight())*0.8);
 			List_Robots.get(id).setDest(dest);
 			List_Robots.get(id).setSrc(src);
 			List_Robots.get(id).setPos(pos);
@@ -742,4 +748,5 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	public static synchronized boolean isRunning(game_service game) {
 		return game.isRunning();
 	}
+	
 }
