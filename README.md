@@ -8,3 +8,8 @@ When the game starts the project allows you to choose between two different ways
 
 2)automatic- by pressing "start game auto" which locate the robots on random nodes and move them automatic in the graph to collect 
 as much as fruits they can to get the highst score. 
+
+
+
+
+<a href="https://ibb.co/Q8gdQNg"><img src="https://i.ibb.co/hX6f9W6/image.png" alt="image" border="0"></a>
