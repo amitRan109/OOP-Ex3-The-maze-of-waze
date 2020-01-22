@@ -12,3 +12,5 @@ as much as fruits they can to get the highst score.
 
 <a href="https://ibb.co/dpYpWnC"><img src="https://i.ibb.co/SmCmsqY/ttt.jpg" alt="ttt" border="0"></a>
 
+in addition, every game saves as a kml. kml is a way to save the diraction of the robots ,and than we can show it on google earth!
+
