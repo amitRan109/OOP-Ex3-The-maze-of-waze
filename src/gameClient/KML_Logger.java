@@ -1,8 +1,12 @@
 package gameClient;
 
 import java.io.File;
+
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
+
+import dataStructure.edge_data;
+import dataStructure.graph;
+import dataStructure.node_data;
 
 /**
  * this class responsible to create 24 kml files
@@ -39,6 +43,17 @@ class KML_Logger {
                         "  <Document>\r\n" +
                         "    <name>" + "Game stage :"+level + "</name>" +"\r\n"
         );
+        
+        str.append("<Style id=\"yellowLineGreenPoly\">\r\n" + 
+        		"      <LineStyle>\r\n" + 
+        		"        <color>7f00ffff</color>\r\n" + 
+        		"        <width>4</width>\r\n" + 
+        		"      </LineStyle>\r\n" + 
+        		"      <PolyStyle>\r\n" + 
+        		"        <color>7f00ff00</color>\r\n" + 
+        		"      </PolyStyle>\r\n" + 
+        		"    </Style>");
+        
         KML_node();
     }
     /**
@@ -96,6 +111,13 @@ class KML_Logger {
         );
     }
 
+    private long time = 0;
+    
+    public void increesTime() {
+    	time++;
+    }
+    
+    
     /**
      * this function is used in "paint"
      * after painting each element
@@ -105,12 +127,16 @@ class KML_Logger {
      */
     void Place_Mark(String style, String location)
     {
-        LocalDateTime Present_time = LocalDateTime.now();
+//        LocalDateTime Present_time = LocalDateTime.now();
+//        "      <TimeStamp>\r\n" +
+//        "        <when>" + Present_time+ "</when>\r\n" +
+//        "      </TimeStamp>\r\n" +
         str.append(
                 "    <Placemark>\r\n" +
-                        "      <TimeStamp>\r\n" +
-                        "        <when>" + Present_time+ "</when>\r\n" +
-                        "      </TimeStamp>\r\n" +
+                		"      <TimeSpan>\r\n" +
+                     	"        <begin>" + time+ "</begin>\r\n" +
+                     	"        <end>" + (time+1) + "</end>\r\n" +
+                     	"      </TimeSpan>\r\n" +
                         "      <styleUrl>#" + style + "</styleUrl>\r\n" +
                         "      <Point>\r\n" +
                         "        <coordinates>" + location + "</coordinates>\r\n" +
@@ -143,5 +169,29 @@ class KML_Logger {
             e.printStackTrace();
         }
     }
+    
+	public void paintGraph(graph gr) {
+		for (node_data n : gr.getV()) {
+			for (edge_data e: gr.getE(n.getKey())) {
+				printEdge(gr, e);
+				
+			}
+		}
+	}
+	private void printEdge(graph gr, edge_data e) {
+		str.append("<Placemark>\r\n" + 
+				"      <name>edge</name>\r\n" + 
+				"      <styleUrl>#yellowLineGreenPoly</styleUrl>\r\n" + 
+				"      <LineString>\r\n" + 
+				"        <coordinates> " + 
+							gr.getNode(e.getSrc()).getLocation()+
+							"\r\n"+
+							gr.getNode(e.getDest()).getLocation()+
+				"        </coordinates>\r\n" + 
+				"      </LineString>\r\n" + 
+				"    </Placemark>");
+		
+	}
+	
 
 }

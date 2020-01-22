@@ -17,7 +17,7 @@ public class Fruit {
 	private int type;
 	private Point3D pos;
 	private DEdge edge;
-	
+	private boolean visit;
 	public Fruit (double value, int type, Point3D pos)  {
 		this.value=value;
 		this.type=type;
@@ -57,6 +57,12 @@ public class Fruit {
 	}
 	public void setPos(Point3D pos) {
 		this.pos = pos;
+	}
+	public boolean getVisit() {
+		return this.visit;
+	}
+	public void setVisit(boolean b) {
+		this.visit= b;		
 	}
 
 }

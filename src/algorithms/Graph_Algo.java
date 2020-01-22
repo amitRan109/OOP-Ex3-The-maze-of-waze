@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import dataStructure.DNode;
 import dataStructure.edge_data;
@@ -152,30 +153,52 @@ public class Graph_Algo implements graph_algorithms, Serializable {
 
 		return g.getNode(dest).getWeight();
 	}
-
-	@Override
 	public List<node_data> shortestPath(int src, int dest) {
-
-		if (g.getNode(src) == null || g.getNode(dest) == null) {
-			throw new RuntimeException("Those nodes are'nt exist");
-		}
-
-		if (shortestPathDist(src, dest) == -1)
+		ArrayList<node_data>listPathRev = new ArrayList<node_data>();//list in reverse
+		double length = shortestPathDist(src,dest);
+		if(length == Integer.MAX_VALUE) {
 			return null;
+		}
+		DNode current=(DNode) g.getNode(dest);
+		current.setTag(1);
+		listPathRev.add(current);
+		String info="";
+		while(current!=g.getNode(src)) {
+			info=current.getInfo();
+			current=(DNode) g.getNode(Integer.parseInt(info));
+			current.setTag(1);
+			listPathRev.add(current);
+		}
+		ArrayList<node_data>listPath = new ArrayList<node_data>();
+		for(int i=listPathRev.size()-1;i>=0;i--)
+			listPath.add(listPathRev.get(i));
 
-		DNode temp = (DNode) g.getNode(dest);
-		List<node_data> ans = new LinkedList<node_data>();
-		Stack<node_data> s = new Stack<node_data>();
-		while (temp.getKey() != src) {
-			s.push(temp);
-			temp = (DNode) g.getNode(Integer.parseInt(temp.getInfo()));
-		}
-		s.push(temp);
-		while (!s.isEmpty()) {
-			ans.add(s.pop());
-		}
-		return ans;
+		return listPath;
 	}
+
+//	@Override
+//	public List<node_data> shortestPath(int src, int dest) {
+//
+//		if (g.getNode(src) == null || g.getNode(dest) == null) {
+//			throw new RuntimeException("Those nodes are'nt exist");
+//		}
+//
+//		if (shortestPathDist(src, dest) == -1)
+//			return null;
+//
+//		DNode temp = (DNode) g.getNode(dest);
+//		List<node_data> ans = new LinkedList<node_data>();
+//		Stack<node_data> s = new Stack<node_data>();
+//		while (temp.getKey() != src) {
+//			s.push(temp);
+//			temp = (DNode) g.getNode(Integer.parseInt(temp.getInfo()));
+//		}
+//		s.push(temp);
+//		while (!s.isEmpty()) {
+//			ans.add(s.pop());
+//		}
+//		return ans;
+//	}
 
 	@Override
 	public List<node_data> TSP(List<Integer> targets) {

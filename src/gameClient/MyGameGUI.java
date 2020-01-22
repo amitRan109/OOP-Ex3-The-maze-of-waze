@@ -55,13 +55,17 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	Thread t;
 	private static KML_Logger kml;
 	private static int graph_num;
+	private static int ID;
+	//DBinfo dbinfo;
 
 	public MyGameGUI () {
 		initWindow ();
 	}
 
 	private void initWindow() {
-		openWindow();
+		openWindowGraph();
+		openWindowId();
+		
 
 	}
 	/**
@@ -70,14 +74,29 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	private void setMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu play = new JMenu("play");
+		JMenu info = new JMenu("information");
+		JMenuItem NOG = new JMenuItem ("Your num of games");
+		NOG.addActionListener(this);
+		JMenuItem YCL = new JMenuItem ("Your current level");
+		YCL.addActionListener(this);
+		JMenuItem YBS = new JMenuItem ("Your best score");
+		YBS.addActionListener(this);
 		JMenuItem playa = new JMenuItem ("play game auto");
 		playa.addActionListener(this);
 		JMenuItem playm = new JMenuItem ("play game manual");
 		playm.addActionListener(this);
+		JMenuItem p = new JMenuItem ("Your position");
+		p.addActionListener(this);
 
+		info.add(NOG);
+		info.add(YCL);
+		info.add(YBS);
+		info.add(p);
 		play.add(playa);
 		play.add(playm);
 		menuBar.add(play);
+		this.setJMenuBar(menuBar);
+		menuBar.add(info);
 		this.setJMenuBar(menuBar);
 	}
 
@@ -337,7 +356,54 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 	/**
 	 *  create a new jframe window.
 	 */
-	private void openWindow () {
+	private void openWindowId () {
+		JFrame window=new JFrame(); 
+
+		//submit button
+		JButton buttont=new JButton("Ok");    
+		buttont.setBounds(100,110,140, 40);   
+
+		//enter name label
+		JLabel labelt = new JLabel();		
+		labelt.setText("Enter ID:");
+		labelt.setBounds(10, 10, 500, 100);
+
+		//empty label which will show event after button clicked
+		JLabel labelt1 = new JLabel();
+		labelt1.setBounds(10, 110, 200, 100);
+
+		//textfield to enter name
+		JTextField textfieldt= new JTextField();
+		textfieldt.setBounds(110, 70, 130, 30);
+
+		//add to frame
+		window.add(labelt1);
+		window.add(textfieldt);
+		window.add(labelt);
+		window.add(buttont);    
+		window.setSize(500,300);    
+		window.setLayout(null);    
+		window.setVisible(true);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		//action listener
+		buttont.addActionListener(new ActionListener() {
+
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String text = textfieldt.getText();
+				int id= Integer.parseInt(text);
+				ID=id;
+				window.dispose();
+				Game_Server.login(ID);
+				}
+
+			          
+		});
+
+	}
+	private void openWindowGraph () {
 		JFrame window=new JFrame(); 
 
 		//submit button
@@ -608,7 +674,7 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 					} catch (JSONException e) {e.printStackTrace();}
 
 					try {
-						Thread.sleep(TimeToSleep());
+						Thread.sleep(100);
 					} catch (Exception e) {e.getStackTrace();}
 				}
 				repaint();
@@ -622,20 +688,20 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 
 	}
 	
-	private int TimeToSleep () {
-		int sleep=100;
-		for (Robot rob: List_Robots) {
-			for (Fruit f: List_Fruits) {
-				if (rob.getSrc() == f.getEdge().getSrc() && 
-						rob.getDest() == f.getEdge().getDest()) {
-					sleep= 90;
-					break;
-				}
-			}
-		}
-		return sleep;
-	}
-	
+//	private int TimeToSleep () {
+//		int sleep=101;
+//		for (Robot rob: List_Robots) {
+//			for (Fruit f: List_Fruits) {
+//				if (rob.getSrc() == f.getEdge().getSrc() && 
+//						rob.getDest() == f.getEdge().getDest()) {
+//					sleep= 101;
+//					break;
+//				}
+//			}
+//		}
+//		return sleep;
+//	}
+//	
 	
 	/**
 	 * update the robots changes in the auto game.
@@ -742,8 +808,143 @@ public class MyGameGUI extends JFrame implements MouseListener,ActionListener {
 			addMouseListener(this);
 		}
 
+		if (e.getActionCommand()=="Your num of games") {
+			JFrame num=new JFrame(); 
+			JLabel labels = new JLabel();	
+			System.out.println(ID);
+			int answer = DBinfo.numOfGames(ID);
+			if(answer==-1) {
+			labels.setText("You did not play yet" );
+			labels.setBounds(10, 10, 500, 100);
+			num.add(labels);
+			num.setSize(300,300);    
+			
+			num.setVisible(true);  
+			}
+			else {
+				labels.setText("The number of games that you played is:"+answer );
+				labels.setBounds(10, 10, 500, 100);
+				num.add(labels);
+				num.setSize(300,300);    
+				num.setVisible(true); 
+			}
+			
 
-	}
+		}
+		if (e.getActionCommand()=="Your current level") {
+			int level=DBinfo.currentLevel(ID);
+			JFrame lev=new JFrame(); 
+			JLabel labels = new JLabel();		
+			labels.setText("Your current level is:"+level );
+			labels.setBounds(10, 10, 500, 100);
+			lev.add(labels);
+			lev.setSize(300,300);    
+			lev.setVisible(true);   
+
+		}
+		if (e.getActionCommand()=="Your best score") {
+			
+			JFrame window=new JFrame(); 
+
+			//submit button
+			JButton buttont=new JButton("Ok");    
+			buttont.setBounds(100,110,140, 40);   
+
+			//enter name label
+			JLabel labelt = new JLabel();		
+			labelt.setText("choose Graph number");
+			labelt.setBounds(10, 10, 500, 100);
+
+			//empty label which will show event after button clicked
+			JLabel labelt1 = new JLabel();
+			labelt1.setBounds(10, 110, 200, 100);
+
+			//textfield to enter name
+			JTextField textfieldt= new JTextField();
+			textfieldt.setBounds(110, 70, 130, 30);
+
+			//add to frame
+			window.add(labelt1);
+			window.add(textfieldt);
+			window.add(labelt);
+			window.add(buttont);    
+			window.setSize(500,300);    
+			window.setLayout(null);    
+			window.setVisible(true);
+			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			//action listener
+			buttont.addActionListener(new ActionListener() {
+
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					String text = textfieldt.getText();
+					int Graphn= Integer.parseInt(text);
+					int score=DBinfo.bestScore(ID,Graphn);
+					if (Graphn<0 || Graphn>11) {
+						labelt1.setText("choose number between 0 to 11");	
+					}
+					else {
+						labelt1.setText("Your best score in this level is:"+score);	
+					}
+				}          
+			});
+
+		}
+		if (e.getActionCommand()=="Your position") {
+			JFrame window=new JFrame(); 
+
+			//submit button
+			JButton buttont=new JButton("Ok");    
+			buttont.setBounds(100,110,140, 40);   
+
+			//enter name label
+			JLabel labelt = new JLabel();		
+			labelt.setText("choose Graph number");
+			labelt.setBounds(10, 10, 500, 100);
+
+			//empty label which will show event after button clicked
+			JLabel labelt1 = new JLabel();
+			labelt1.setBounds(10, 110, 200, 100);
+
+			//textfield to enter name
+			JTextField textfieldt= new JTextField();
+			textfieldt.setBounds(110, 70, 130, 30);
+
+			//add to frame
+			window.add(labelt1);
+			window.add(textfieldt);
+			window.add(labelt);
+			window.add(buttont);    
+			window.setSize(500,300);    
+			window.setLayout(null);    
+			window.setVisible(true);
+			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			//action listener
+			buttont.addActionListener(new ActionListener() {
+
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					String text = textfieldt.getText();
+					int sNumber= Integer.parseInt(text);
+					int p=DBinfo.Position(ID,sNumber);
+					if (sNumber<0 || sNumber>11) {
+						labelt1.setText("choose number between 0 to 11");	
+					}
+					else {
+						labelt1.setText("Your position in the game is:"+p);	
+		
+					}
+
+				}          
+			});
+
+		}	
+		}
+	
 
 	public static synchronized boolean isRunning(game_service game) {
 		return game.isRunning();

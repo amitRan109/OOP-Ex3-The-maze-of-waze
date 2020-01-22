@@ -1,5 +1,8 @@
 package gameClient;
 
+import java.util.List;
+
+import dataStructure.node_data;
 import utils.Point3D;
 /**
  * The class represent a robot object that have six fildes:
@@ -21,6 +24,7 @@ public class Robot {
 	private int dest;
 	private double speed;
 	private Point3D pos;
+	private List<node_data> path;
 	
 	public Robot (int id, double value, int src, int dest, double speed, Point3D pos) {
 		this.id=id;
@@ -81,6 +85,13 @@ public class Robot {
 
 	public void setPos(Point3D pos) {
 		this.pos = pos;
+	}
+	public List<node_data> getPath(){
+		return this.path;
+	}
+	public void setPath(List<node_data> way) {
+		this.path= way;
+		
 	}
 	
 	
