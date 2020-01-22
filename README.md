@@ -17,6 +17,9 @@ And all your scores are saved in the server.
 <a href="https://ibb.co/dpYpWnC"><img src="https://i.ibb.co/SmCmsqY/ttt.jpg" alt="ttt" border="0"></a>
 
 At this chart you can see  our best score in each level:
+
+
+
 | _Game_ | _Score_ |
 |-------------|------------|
 | 0        | 140   | 
