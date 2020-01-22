@@ -12,31 +12,19 @@ as much as fruits they can to get the highst score.
 
 
 
-<a href="https://ibb.co/Q8gdQNg"><img src="https://i.ibb.co/hX6f9W6/image.png" alt="image" border="0"></a>
+<a href="https://ibb.co/dpYpWnC"><img src="https://i.ibb.co/SmCmsqY/ttt.jpg" alt="ttt" border="0"></a>
 
 
 | _Game_ | _Score_ |
 |-------------|------------|
-| 0        | 0   | 
+| 0        | 140   | 
 | 1         | 490 | 
 | 3         | 758 | 
-| 5         | 0    | 
-| 5        | 0| 
-| 6         | 0    | 
-| 7        | 0| 
-| 8         | 0    | 
+| 5         | 570    | 
 | 9        | 0| 
-| 10         | 0     | 
-| 11         | 0 | 
-| 12         | 0     | 
-| 13         | 0 | 
-| 14       | 0    | 
-| 15         | 0| 
-| 16         | 0     | 
-| 17        | 0 | 
-| 18         | 0     | 
-| 19        | 0 | 
-| 20        | 0    |
-|21        | 0 | 
-| 22        | 0     | 
-| 23        | 0 |
+| 11         | 0    | 
+| 13        | 0| 
+| 16         | 0    | 
+|19       | 0| 
+| 20        | 0     | 
+| 23         | 0 | 
