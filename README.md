@@ -1,4 +1,4 @@
-# ob-Ex3
+# The maze of waze
 
 This project allows you to choose Graph between 24 Graphs options,
 when every graph contain nodes and edges when on some edges located fruits.
